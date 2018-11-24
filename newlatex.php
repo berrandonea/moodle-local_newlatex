@@ -58,7 +58,7 @@ if ($confirm) {
     $latexassigns = $DB->get_recordset_sql($assignsql);
     foreach ($latexassigns as $latexassign) {
         $latexassign->intro = newlatex($latexassign->intro);
-        $DB->updaterecord('assign', $latexassign);
+        $DB->update_record('assign', $latexassign);
         $nbupdated++;
     }
 
