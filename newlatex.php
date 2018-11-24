@@ -25,7 +25,7 @@
  * Process conversion
  */
 
-include('../../config.php');
+require_once('../../config.php');
 
 $courseid = required_param('id', PARAM_INT);
 $confirm = optional_param('confirm', 0, PARAM_INT);
@@ -49,38 +49,38 @@ if ($confirm) {
     $latexlabels = $DB->get_recordset_sql($labelsql);
     foreach ($latexlabels as $latexlabel) {
         $latexlabel->intro = newlatex($latexlabel->intro);
-	$DB->update_record('label', $latexlabel);
-	$nbupdated++;
+        $DB->update_record('label', $latexlabel);
+        $nbupdated++;
     }
     $latexlabels->close();
-	
+
     $assignsql = "SELECT * FROM {assign} WHERE course = $courseid AND intro LIKE '%$$%$$%'";
     $latexassigns = $DB->get_recordset_sql($assignsql);
     foreach ($latexassigns as $latexassign) {
         $latexassign->intro = newlatex($latexassign->intro);
         $DB->updaterecord('assign', $latexassign);
-	$nbupdated++;
+        $nbupdated++;
     }
-	
+
     $pagesql = "SELECT * FROM {page} WHERE course = $courseid AND (intro LIKE '%$$%$$%' OR content LIKE '%$$%$$%')";
     $latexpages = $DB->get_recordset_sql($pagesql);
     foreach ($latexpages as $latexpage) {
         $latexpage->intro = newlatex($latexpage->intro);
-	$latexpage->content = newlatex($latexpage->content);
+        $latexpage->content = newlatex($latexpage->content);
         $DB->update_record('page', $latexpage);
-	$nbupdated++;
+        $nbupdated++;
     }
     $latexpages->close();
-	
+
     $sectionsql = "SELECT * FROM {course_sections} WHERE course = $courseid AND summary LIKE '%$$%$$%'";
     $latexsections = $DB->get_recordset_sql($sectionsql);
     foreach ($latexsections as $latexsection) {
         $latexsection->summary = newlatex($latexsection->summary);
-  	$DB->update_record('course_sections', $latexsection);
-  	$nbupdated++;
+        $DB->update_record('course_sections', $latexsection);
+        $nbupdated++;
     }
     $latexsections->close();
-    
+
     $questionsql = "SELECT * FROM {question} WHERE questiontext LIKE '%$$%$$%' OR generalfeedback LIKE '%$$%$$%'";
     $latexquestions = $DB->get_recordset_sql($questionsql);
     foreach ($latexquestions as $latexquestion) {
@@ -91,7 +91,7 @@ if ($confirm) {
     }
     $latexquestions->close();
 
-    $answersql = "SELECT * FROM {question_answers} WHERE answer LIKE '%$$%$$%' OR feedback LIKE '%$$%$$%'";    
+    $answersql = "SELECT * FROM {question_answers} WHERE answer LIKE '%$$%$$%' OR feedback LIKE '%$$%$$%'";
     $latexanswers = $DB->get_recordset_sql($answersql);
     foreach ($latexanswers as $latexanswer) {
         $latexanswer->answer = newlatex($latexanswer->answer);
@@ -100,34 +100,35 @@ if ($confirm) {
         $nbupdated++;
     }
     $latexanswers->close();
-    
+
     $hintsql = "SELECT * FROM {question_hints} WHERE hint LIKE '%$$%$$%'";
     $latexhints = $DB->get_recordset_sql($hintsql);
     foreach ($latexhints as $latexhint) {
-		$latexhint->hint = newlatex($latexhint->hint);
-		$DB->update_record('question_hints', $latexhint);
-		$nbupdated++;
-	}
+        $latexhint->hint = newlatex($latexhint->hint);
+        $DB->update_record('question_hints', $latexhint);
+        $nbupdated++;
+    }
     $latexhints->close();
 
-    $workshopsql = "SELECT * FROM {workshop} WHERE course = $courseid AND (intro LIKE '%$$%$$%') OR (instructauthors LIKE '%$$%$$%') OR (instructreviewers LIKE '%$$%$$%') OR (conclusion LIKE '%$$%$$%')";
+    $workshopsql = "SELECT * FROM {workshop} WHERE course = $courseid ".
+        "AND (intro LIKE '%$$%$$%') OR (instructauthors LIKE '%$$%$$%') ".
+        "OR (instructreviewers LIKE '%$$%$$%') OR (conclusion LIKE '%$$%$$%')";
     $latexworkshops = $DB->get_recordset_sql($workshopsql);
     foreach ($latexworkshops as $latexworkshop) {
-		$latexworkshop->intro = newlatex($latexworkshop->intro);
-		$latexworkshop->instructauthors = newlatex($latexworkshop->instructauthors);
-		$latexworkshop->instructreviewers = newlatex($latexworkshop->instructreviewers);
-		$latexworkshop->conclusion = newlatex($latexworkshop->conclusion);
-		$DB->update_record('workshop', $latexworkshop);
-		$nbupdated++;
-	}
-	$latexworkshops->close();
-	
+        $latexworkshop->intro = newlatex($latexworkshop->intro);
+        $latexworkshop->instructauthors = newlatex($latexworkshop->instructauthors);
+        $latexworkshop->instructreviewers = newlatex($latexworkshop->instructreviewers);
+        $latexworkshop->conclusion = newlatex($latexworkshop->conclusion);
+        $DB->update_record('workshop', $latexworkshop);
+        $nbupdated++;
+    }
+    $latexworkshops->close();
 }
 
 echo $OUTPUT->header();
 if ($confirm) {
-	echo $nbupdated.' '.get_string('updatedtexts', 'local_newlatex').".<br>";
-	echo "<p><a href='$courseurl'>".get_string('back')."</a></p>";
+    echo $nbupdated.' '.get_string('updatedtexts', 'local_newlatex').".<br>";
+    echo "<p><a href='$courseurl'>".get_string('back')."</a></p>";
 } else {
     echo "<p style='text-align:justify'>".get_string('thiswillconvert', 'local_newlatex')."</p>";
     echo "<p style='text-align:center'>";
@@ -143,16 +144,16 @@ function newlatex($oldstring) {
     if ($nbchunks > 1) {
         $newstring = '';
         for ($i = 0; $i < ($nbchunks - 1); $i++) {
-		    $newstring .= $oldtable[$i];
-		    if ($i % 2) {
-			    $newstring .= '\)';
-		    } else {
-			    $newstring .= '\(';
-			}
-	    }
-	    $newstring .= $oldtable[$nbchunks - 1];
+            $newstring .= $oldtable[$i];
+            if ($i % 2) {
+                $newstring .= '\)';
+            } else {
+                $newstring .= '\(';
+            }
+        }
+        $newstring .= $oldtable[$nbchunks - 1];
         return $newstring;
-	} else {
-		return $oldstring;
-	}
+    } else {
+        return $oldstring;
+    }
 }

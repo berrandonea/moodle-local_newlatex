@@ -28,9 +28,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 function local_newlatex_extend_settings_navigation(settings_navigation $nav, context $context) {
-	global $COURSE;
+    global $COURSE;
     if (has_capability('local/newlatex:convert', $context)) {
-        $branch = $nav->get('courseadmin');        
+        $branch = $nav->get('courseadmin');
         if ($branch) {
             $params = array('id' => $COURSE->id);
             $url = new moodle_url('/local/newlatex/newlatex.php', $params);

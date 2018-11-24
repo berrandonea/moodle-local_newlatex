@@ -25,6 +25,8 @@
  * Version number
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $plugin->version = 2018112400;
 $plugin->requires = 2015051100;
 $plugin->component = 'local_newlatex';
