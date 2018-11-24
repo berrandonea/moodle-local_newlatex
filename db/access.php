@@ -31,7 +31,7 @@ $capabilities = array(
     'local/newlatex:convert' => array(
         'riskbitmask' => RISK_SPAM | RISK_XSS,
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
             'manager' => CAP_ALLOW
         ),
