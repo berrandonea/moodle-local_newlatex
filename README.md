@@ -8,13 +8,6 @@ To include a LaTeX expression inside a line of normal text, it now has to be sur
 
 When you import, on a new version of Moodle, a course that was created on an old one, or when you update a Moodle that already has old courses, you may want to replace all your $$ with \( and \)
 
-Symbols are replaced in :
-
-- labels (current course)
-- course sections descriptions (current course)
-- question texts, answers, hints and feedbacks (whole databank)
-- workshops (intro, author instructions, reviewer instructions, conclusion)
-
-
-
+Symbols are replaced in labels, assigns, pages, workshops and sections descriptions within the current course.
+They are also replaced in all the databank questions (texts, answers, hints and feedbacks).
 
