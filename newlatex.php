@@ -49,38 +49,55 @@ if ($confirm) {
     $latexlabels = $DB->get_recordset_sql($labelsql);
     foreach ($latexlabels as $latexlabel) {
         $latexlabel->intro = newlatex($latexlabel->intro);
-        //~ echo "$latexlabel->intro<br>";
-	    $DB->update_record('label', $latexlabel);
-	    $nbupdated++;
+	$DB->update_record('label', $latexlabel);
+	$nbupdated++;
     }
     $latexlabels->close();
-
+	
+    $assignsql = "SELECT * FROM {assign} WHERE course = $courseid AND intro LIKE '%$$%$$%'";
+    $latexassigns = $DB->get_recordset_sql($assignsql);
+    foreach ($latexassigns as $latexassign) {
+        $latexassign->intro = newlatex($latexassign->intro);
+        $DB->updaterecord('assign', $latexassign);
+	$nbupdated++;
+    }
+	
+    $pagesql = "SELECT * FROM {page} WHERE course = $courseid AND (intro LIKE '%$$%$$%' OR content LIKE '%$$%$$%')";
+    $latexpages = $DB->get_recordset_sql($pagesql);
+    foreach ($latexpages as $latexpage) {
+        $latexpage->intro = newlatex($latexpage->intro);
+	$latexpage->content = newlatex($latexpage->content);
+        $DB->update_record('page', $latexpage);
+	$nbupdated++;
+    }
+    $latexpages->close();
+	
     $sectionsql = "SELECT * FROM {course_sections} WHERE course = $courseid AND summary LIKE '%$$%$$%'";
     $latexsections = $DB->get_recordset_sql($sectionsql);
     foreach ($latexsections as $latexsection) {
         $latexsection->summary = newlatex($latexsection->summary);
-  	    $DB->update_record('course_sections', $latexsection);
-  	    $nbupdated++;
+  	$DB->update_record('course_sections', $latexsection);
+  	$nbupdated++;
     }
     $latexsections->close();
     
     $questionsql = "SELECT * FROM {question} WHERE questiontext LIKE '%$$%$$%' OR generalfeedback LIKE '%$$%$$%'";
     $latexquestions = $DB->get_recordset_sql($questionsql);
     foreach ($latexquestions as $latexquestion) {
-	    $latexquestion->questiontext = newlatex($latexquestion->questiontext);
-	    $latexquestion->generalfeedback = newlatex($latexquestion->generalfeedback);
-	    $DB->update_record('question', $latexquestion);
-	    $nbupdated++;
+        $latexquestion->questiontext = newlatex($latexquestion->questiontext);
+        $latexquestion->generalfeedback = newlatex($latexquestion->generalfeedback);
+        $DB->update_record('question', $latexquestion);
+        $nbupdated++;
     }
     $latexquestions->close();
 
     $answersql = "SELECT * FROM {question_answers} WHERE answer LIKE '%$$%$$%' OR feedback LIKE '%$$%$$%'";    
     $latexanswers = $DB->get_recordset_sql($answersql);
     foreach ($latexanswers as $latexanswer) {
-	    $latexanswer->answer = newlatex($latexanswer->answer);
-	    $latexanswer->feedback = newlatex($latexanswer->feedback);
-	    $DB->update_record('question_answers', $latexanswer);
-	    $nbupdated++;
+        $latexanswer->answer = newlatex($latexanswer->answer);
+        $latexanswer->feedback = newlatex($latexanswer->feedback);
+        $DB->update_record('question_answers', $latexanswer);
+        $nbupdated++;
     }
     $latexanswers->close();
     
@@ -93,7 +110,7 @@ if ($confirm) {
 	}
     $latexhints->close();
 
-    $workshopsql = "SELECT * FROM {workshop} WHERE (intro LIKE '%$$%$$%') OR (instructauthors LIKE '%$$%$$%') OR (instructreviewers LIKE '%$$%$$%') OR (conclusion LIKE '%$$%$$%')";
+    $workshopsql = "SELECT * FROM {workshop} WHERE course = $courseid AND (intro LIKE '%$$%$$%') OR (instructauthors LIKE '%$$%$$%') OR (instructreviewers LIKE '%$$%$$%') OR (conclusion LIKE '%$$%$$%')";
     $latexworkshops = $DB->get_recordset_sql($workshopsql);
     foreach ($latexworkshops as $latexworkshop) {
 		$latexworkshop->intro = newlatex($latexworkshop->intro);
@@ -105,21 +122,6 @@ if ($confirm) {
 	}
 	$latexworkshops->close();
 	
-	$realtimequestionsql = "SELECT * FROM {realtimequiz_question} WHERE questiontext LIKE '%$$%$$%'";
-	$realtimequestions = $DB->get_recordset_sql($realtimequestionsql);
-	foreach ($realtimequestions as $realtimequestion) {
-		$realtimequestion->questiontext = newlatex($realtimequestion->questiontext);
-		$DB->update_record('realtimequiz_question', $realtimequestion);
-		$nbupdated++;
-	}
-
-	$realtimeanswersql = "SELECT * FROM {realtimequiz_answer} WHERE answertext LIKE '%$$%$$%'";
-	$realtimeanswers = $DB->get_recordset_sql($realtimeanswersql);
-	foreach ($realtimeanswers as $realtimeanswer) {
-		$realtimeanswer->answertext = newlatex($realtimeanswer->answertext);
-		$DB->update_record('realtimequiz_answer', $realtimeanswer);
-		$nbupdated++;
-	}
 }
 
 echo $OUTPUT->header();
